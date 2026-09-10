@@ -3,6 +3,8 @@ const locationInput = document.getElementById("location");
 const statusMessage = document.getElementById("status");
 const weatherDisplay = document.getElementById("weather-display");
 
+let temperatureChart = null;
+
 const getLocation = () => {
   return locationInput.value.trim();
 };
@@ -300,7 +302,11 @@ const createTemperatureChart = (forecastData) => {
     return day.minTemperature;
   });
 
-  new Chart(chartCanvas, {
+  if (temperatureChart !== null) {
+    temperatureChart.destroy();
+  }
+
+  temperatureChart = new Chart(chartCanvas, {
     type: "line",
     data: {
       labels: labels,
