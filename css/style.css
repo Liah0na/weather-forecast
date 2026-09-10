@@ -129,3 +129,29 @@ body {
 .forecast-description {
     font-weight: bold;
 }
+
+.weather-icon {
+    font-size: 40px;
+    margin: 10px 0;
+}
+
+.forecast-description {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.forecast-summary {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.forecast-summary h2 {
+    margin-top: 0;
+}
+
+.forecast-summary p {
+    margin: 8px 0;
+}

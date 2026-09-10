@@ -15,28 +15,30 @@ const showLoading = () => {
 const showWeather = (locationData, weatherData) => {
   const temperature = weatherData.current.temperature_2m;
   const humidity = weatherData.current.relative_humidity_2m;
-  const forecastCards = createForecastCards(weatherData.daily);
+  const forecastData = prepareForecastData(weatherData.daily);
+  const forecastCards = createForecastCards(forecastData);
+  const forecastSummary = createForecastSummary(forecastData);
 
   weatherDisplay.innerHTML = `
-      <div class="weather-card">
-        <h2>
-          ${locationData.name}
-        </h2>
-        <div class="temperature">
-          ${temperature}°C
-        </div>
-        <p>
-          Humidity: ${humidity}%
-        </p>
+    <div class="weather-card">
+      <h2>
+        ${locationData.name}
+      </h2>
+      <div class="temperature">
+        ${temperature}°C
       </div>
-
-      <section class="forecast">
-        <h2>Forecast</h2>
-        <div class="forecast-grid">
-          ${forecastCards.join("")}
-        </div>
-      </section>
-    `;
+      <p>
+        Humidity: ${humidity}%
+      </p>
+    </div>
+    ${forecastSummary}
+    <section class="forecast">
+      <h2>Forecast</h2>
+      <div class="forecast-grid">
+        ${forecastCards.join("")}
+      </div>
+    </section>
+  `;
 }
 
 const handleSearch = async (event) => {
@@ -111,62 +113,170 @@ const getWeather = async (latitude, longitude) => {
   return await response.json();
 }
 
-const getWeatherDescription = (code) => {
-  const descriptions = {
-    0: "Clear sky",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    45: "Fog",
-    48: "Depositing rime fog",
-    51: "Light drizzle",
-    53: "Moderate drizzle",
-    55: "Dense drizzle",
-    61: "Slight rain",
-    63: "Moderate rain",
-    65: "Heavy rain",
-    71: "Slight snow",
-    73: "Moderate snow",
-    75: "Heavy snow",
-    80: "Slight rain showers",
-    81: "Moderate rain showers",
-    82: "Violent rain showers",
-    95: "Thunderstorm"
+const getWeatherInfo = (code) => {
+  const weatherConditions = {
+    0: {
+      icon: "☀️",
+      description: "Clear sky"
+    },
+    1: {
+      icon: "🌤️",
+      description: "Mainly clear"
+    },
+    2: {
+      icon: "⛅",
+      description: "Partly cloudy"
+    },
+    3: {
+      icon: "☁️",
+      description: "Overcast"
+    },
+    45: {
+      icon: "🌫️",
+      description: "Fog"
+    },
+    48: {
+      icon: "🌫️",
+      description: "Depositing rime fog"
+    },
+    51: {
+      icon: "🌦️",
+      description: "Light drizzle"
+    },
+    53: {
+      icon: "🌦️",
+      description: "Moderate drizzle"
+    },
+    55: {
+      icon: "🌧️",
+      description: "Dense drizzle"
+    },
+    61: {
+      icon: "🌧️",
+      description: "Slight rain"
+    },
+    63: {
+      icon: "🌧️",
+      description: "Moderate rain"
+    },
+    65: {
+      icon: "🌧️",
+      description: "Heavy rain"
+    },
+    71: {
+      icon: "🌨️",
+      description: "Slight snow"
+    },
+    73: {
+      icon: "🌨️",
+      description: "Moderate snow"
+    },
+    75: {
+      icon: "❄️",
+      description: "Heavy snow"
+    },
+    80: {
+      icon: "🌦️",
+      description: "Slight rain showers"
+    },
+    81: {
+      icon: "🌧️",
+      description: "Moderate rain showers"
+    },
+    82: {
+      icon: "⛈️",
+      description: "Violent rain showers"
+    },
+    95: {
+      icon: "⛈️",
+      description: "Thunderstorm"
+    }
   };
 
-  return descriptions[code] ?? "Unknown weather condition";
+  return weatherConditions[code] ?? {
+    icon: "❓",
+    description: "Unknown weather condition"
+  };
 }
 
-const createForecastCards = (dailyData) => {
-  return dailyData.time.map((date, index) => {
-    const maxTemperature =
-      dailyData.temperature_2m_max[index];
+const formatForecastDate = (dateString) => {
+  const date = new Date(`${dateString}T00:00:00`);
 
-    const minTemperature =
-      dailyData.temperature_2m_min[index];
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  }).format(date);
+}
 
-    const weatherCode =
-      dailyData.weather_code[index];
-
-    const description =
-      getWeatherDescription(weatherCode);
+const createForecastCards = (forecastData) => {
+  return forecastData.map(day => {
+    const weatherInfo = getWeatherInfo(day.weatherCode);
+    const formattedDate = formatForecastDate(day.date);
 
     return `
-            <article class="forecast-card">
-                <h3>${date}</h3>
-
-                <p class="forecast-description">
-                    ${description}
-                </p>
-
-                <p>
-                    High: ${maxTemperature}°C
-                </p>
-
-                <p>
-                    Low: ${minTemperature}°C
-                </p>
-            </article>
-        `;
+      <article class="forecast-card">
+        <h3>${formattedDate}</h3>
+        <div class="weather-icon">
+          ${weatherInfo.icon}
+        </div>
+        <p class="forecast-description">
+          ${weatherInfo.description}
+        </p>
+        <p>
+          High: ${day.maxTemperature}°C
+        </p>
+        <p>
+          Low: ${day.minTemperature}°C
+        </p>
+      </article>
+    `;
   });
+}
+
+const prepareForecastData = (dailyData) => {
+  return dailyData.time.map((date, index) => {
+    return {
+      date: date,
+      maxTemperature: dailyData.temperature_2m_max[index],
+      minTemperature: dailyData.temperature_2m_min[index],
+      weatherCode: dailyData.weather_code[index]
+    };
+  });
+}
+
+const getWarmDays = (forecastData) => {
+  return forecastData.filter(day => {
+    return day.maxTemperature >= 25;
+  });
+}
+
+const getAverageHighTemperature = (forecastData) => {
+  const totalTemperature = forecastData.reduce(
+    (total, day) => {
+      return total + day.maxTemperature;
+    },
+    0
+  );
+
+  return totalTemperature / forecastData.length;
+}
+
+const createForecastSummary = (forecastData) => {
+  const warmDays = getWarmDays(forecastData);
+  const averageHigh = getAverageHighTemperature(forecastData);
+
+  return `
+    <section class="forecast-summary">
+      <h2>Forecast Summary</h2>
+      <p>
+        Average high:
+        <strong>${averageHigh.toFixed(1)}°C</strong>
+      </p>
+      <p>
+        Warm days:
+        <strong>${warmDays.length}</strong>
+      </p>
+    </section>
+    `;
 }
