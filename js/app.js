@@ -32,6 +32,12 @@ const showWeather = (locationData, weatherData) => {
       </p>
     </div>
     ${forecastSummary}
+    <section class="weather-chart">
+      <h2>Temperature Forecast</h2>
+      <div class="chart-container">
+        <canvas id="temperature-chart"></canvas>
+      </div>
+    </section>
     <section class="forecast">
       <h2>Forecast</h2>
       <div class="forecast-grid">
@@ -39,6 +45,7 @@ const showWeather = (locationData, weatherData) => {
       </div>
     </section>
   `;
+  createTemperatureChart(forecastData);
 }
 
 const handleSearch = async (event) => {
@@ -279,4 +286,42 @@ const createForecastSummary = (forecastData) => {
       </p>
     </section>
     `;
+}
+
+const createTemperatureChart = (forecastData) => {
+  const chartCanvas = document.getElementById("temperature-chart");
+  const labels = forecastData.map(day => {
+    return formatForecastDate(day.date);
+  });
+  const maximumTemperatures = forecastData.map(day => {
+    return day.maxTemperature;
+  });
+  const minimumTemperatures = forecastData.map(day => {
+    return day.minTemperature;
+  });
+
+  new Chart(chartCanvas, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Maximum Temperature (°C)",
+          data: maximumTemperatures
+        },
+        {
+          label: "Minimum Temperature (°C)",
+          data: minimumTemperatures
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  });
 }

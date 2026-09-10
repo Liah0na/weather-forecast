@@ -155,3 +155,21 @@ body {
 .forecast-summary p {
     margin: 8px 0;
 }
+
+.weather-chart {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.weather-chart h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
