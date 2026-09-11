@@ -1,5 +1,6 @@
 const locationForm = document.getElementById("location-form");
 const locationInput = document.getElementById("location");
+const searchButton = locationForm.querySelector("button");
 const statusMessage = document.getElementById("status");
 const weatherDisplay = document.getElementById("weather-display");
 
@@ -12,9 +13,18 @@ const getLocation = () => {
 const showLoading = () => {
   statusMessage.textContent = "Loading weather information...";
   weatherDisplay.innerHTML = "";
+  searchButton.disabled = true;
+}
+
+function showError(message) {
+    statusMessage.textContent = message;
+    searchButton.disabled = false;
+    weatherDisplay.innerHTML = "";
 }
 
 const showWeather = (locationData, weatherData) => {
+  statusMessage.textContent = "";
+  searchButton.disabled = false;
   const temperature = weatherData.current.temperature_2m;
   const humidity = weatherData.current.relative_humidity_2m;
   const forecastData = prepareForecastData(weatherData.daily);
@@ -75,8 +85,7 @@ const handleSearch = async (event) => {
     );
 
   } catch (error) {
-    statusMessage.textContent = error.message;
-    weatherDisplay.innerHTML = "";
+    showError(error.message);
   }
 }
 
