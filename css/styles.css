@@ -1,0 +1,458 @@
+/* ========================================
+   Global Styles
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #1f2937;
+  background: linear-gradient(135deg,
+      #dbeafe,
+      #f8fafc);
+}
+
+
+/* ========================================
+   Main Application
+======================================== */
+
+.weather-app {
+  width: min(92%, 900px);
+  margin: 40px auto;
+}
+
+
+/* ========================================
+   Header
+======================================== */
+
+.app-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.app-header h1 {
+  margin: 0 0 10px;
+  font-size: 2.5rem;
+  color: #1e3a8a;
+}
+
+.app-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+
+/* ========================================
+   Search Section
+======================================== */
+
+.search-section {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.search-section label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #334155;
+}
+
+.search-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.search-controls input {
+  flex: 1;
+  padding: 13px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-controls input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.search-controls button {
+  padding: 13px 24px;
+  border: none;
+  border-radius: 10px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.search-controls button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.search-controls button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   Status Messages
+======================================== */
+
+.status {
+  min-height: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #475569;
+}
+
+
+/* ========================================
+   Main Weather Display
+======================================== */
+
+.weather-display {
+  min-height: 150px;
+}
+
+
+/* ========================================
+   Current Weather Card
+======================================== */
+
+.weather-card {
+  padding: 40px 25px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  color: white;
+  box-shadow: 0 12px 30px rgba(30, 64, 175, 0.25);
+}
+
+.weather-card h2 {
+  margin: 0 0 20px;
+  font-size: 1.9rem;
+  font-weight: bold;
+  color: white;
+}
+
+.weather-card .weather-icon {
+  margin: 10px 0 15px;
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.weather-card .temperature {
+  margin: 10px 0;
+  font-size: 4.5rem;
+  line-height: 1;
+  font-weight: bold;
+  letter-spacing: -2px;
+  color: white;
+}
+
+.weather-card .weather-description {
+  margin: 15px 0 20px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #e0f2fe;
+}
+
+.weather-card p:last-child {
+  display: inline-block;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
+
+/* ========================================
+   Forecast Summary
+======================================== */
+
+.forecast-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 25px;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+.forecast-summary h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+  color: #1e3a8a;
+  font-size: 1.4rem;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  margin: 0;
+  padding: 20px 15px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  text-align: center;
+}
+
+.summary-icon {
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.summary-label {
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.summary-item strong {
+  display: block;
+  margin-top: 8px;
+  color: #1e40af;
+  font-size: 1.8rem;
+}
+
+/* ========================================
+   Temperature Chart
+======================================== */
+
+.weather-chart {
+  margin-bottom: 20px;
+  padding: 25px;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+.weather-chart h2 {
+  margin: 0 0 25px;
+  text-align: center;
+  color: #1e3a8a;
+  font-size: 1.4rem;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 350px;
+}
+
+/* ========================================
+   Daily Weather Details
+======================================== */
+
+.daily-details {
+  margin-bottom: 20px;
+  padding: 25px;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+.daily-details h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #1e3a8a;
+}
+
+.daily-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,
+      minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.daily-detail {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.daily-detail:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(15, 23, 42, 0.08);
+}
+
+.daily-detail h3 {
+  margin-top: 0;
+  color: #1e40af;
+  font-size: 1rem;
+}
+
+.daily-detail p {
+  margin: 8px 0;
+  color: #475569;
+}
+
+
+/* ========================================
+   Forecast Cards
+======================================== */
+
+.forecast {
+  margin-bottom: 20px;
+  padding: 25px;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+.forecast h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #1e3a8a;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,
+      minmax(140px, 1fr));
+  gap: 15px;
+}
+
+.forecast-card {
+  padding: 20px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #f8fafc;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.forecast-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(15, 23, 42, 0.08);
+}
+
+.forecast-card h3 {
+  margin-top: 0;
+  color: #1e40af;
+  font-size: 1rem;
+}
+
+.forecast-card p {
+  margin: 8px 0;
+  color: #475569;
+}
+
+.forecast-description {
+  font-weight: bold;
+  color: #334155;
+}
+
+.weather-icon {
+  margin: 12px 0;
+  font-size: 2.5rem;
+}
+
+
+/* ========================================
+   Responsive Design
+======================================== */
+
+@media (max-width: 600px) {
+
+  .weather-app {
+    width: 94%;
+    margin: 25px auto;
+  }
+
+  .app-header h1 {
+    font-size: 2rem;
+  }
+
+  .search-controls {
+    flex-direction: column;
+  }
+
+  .search-controls button {
+    width: 100%;
+  }
+
+  .weather-card {
+    padding: 30px 20px;
+  }
+
+  .weather-card .temperature {
+    font-size: 3.2rem;
+  }
+
+  .forecast-summary,
+  .weather-chart,
+  .daily-details,
+  .forecast {
+    padding: 20px;
+  }
+
+  .forecast-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .forecast-summary h2 {
+    grid-column: 1;
+  }
+
+  .summary-item {
+    min-height: 120px;
+  }
+
+  .summary-icon {
+    font-size: 2.2rem;
+  }
+
+  .weather-chart {
+    padding: 20px;
+  }
+
+  .chart-container {
+    height: 280px;
+  }
+
+  .daily-details-grid,
+  .forecast-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+
+  .daily-details-grid,
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+}

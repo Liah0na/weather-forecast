@@ -16,17 +16,20 @@ const showLoading = () => {
   searchButton.disabled = true;
 }
 
-function showError(message) {
-    statusMessage.textContent = message;
-    searchButton.disabled = false;
-    weatherDisplay.innerHTML = "";
+const showError = (message) => {
+  statusMessage.textContent = message;
+  searchButton.disabled = false;
+  weatherDisplay.innerHTML = "";
 }
 
 const showWeather = (locationData, weatherData) => {
   statusMessage.textContent = "";
   searchButton.disabled = false;
   const temperature = weatherData.current.temperature_2m;
+  const feelsLike = weatherData.current.apparent_temperature;
   const humidity = weatherData.current.relative_humidity_2m;
+  const weatherCode = weatherData.current.weather_code;
+  const weatherInfo = getWeatherInfo(weatherCode);
   const forecastData = prepareForecastData(weatherData.daily);
   const processedForecast = processForecastDays(forecastData);
   const dailyWeatherDetails = createDailyWeatherDetails(processedForecast);
@@ -37,9 +40,18 @@ const showWeather = (locationData, weatherData) => {
       <h2>
         ${locationData.name}
       </h2>
+      <div class="weather-icon">
+        ${weatherInfo.icon}
+      </div>
       <div class="temperature">
         ${temperature}°C
       </div>
+      <p class="weather-description">
+        ${weatherInfo.description}
+      </p>
+      <p>
+        Feels like: ${feelsLike}°C
+      </p>
       <p>
         Humidity: ${humidity}%
       </p>
@@ -93,7 +105,6 @@ locationForm.addEventListener("submit", handleSearch);
 
 const getCoordinates = async (location) => {
   const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1&language=en&format=json`;
-
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -114,10 +125,9 @@ const getWeather = async (latitude, longitude) => {
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${latitude}` +
     `&longitude=${longitude}` +
-    `&current=temperature_2m,relative_humidity_2m,weather_code` +
+    `&current=temperature_2m,relative_humidity_2m,weather_code,apparent_temperature` +
     `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
     `&timezone=auto`;
-
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -304,17 +314,20 @@ const getAverageHighTemperature = (forecastData) => {
 
 const createForecastSummary = (forecastData) => {
   const warmDays = getWarmDays(forecastData);
-  const averageHigh = getAverageHighTemperature(forecastData);
+  const averageHigh =
+    getAverageHighTemperature(forecastData);
 
   return `
     <section class="forecast-summary">
       <h2>Forecast Summary</h2>
-      <p>
-        Average high:
+      <p class="summary-item">
+        <span class="summary-icon" aria-hidden="true">🌡️</span>
+        <span class="summary-label">Average high</span>
         <strong>${averageHigh.toFixed(1)}°C</strong>
       </p>
-      <p>
-        Warm days:
+      <p class="summary-item">
+        <span class="summary-icon" aria-hidden="true">☀️</span>
+        <span class="summary-label">Warm days</span>
         <strong>${warmDays.length}</strong>
       </p>
     </section>
@@ -343,19 +356,69 @@ const createTemperatureChart = (forecastData) => {
       labels: labels,
       datasets: [
         {
-          label: "Maximum Temperature (°C)",
-          data: maximumTemperatures
+          label: "Maximum Temperature",
+          data: maximumTemperatures,
+          borderColor: "#ef4444",
+          backgroundColor: "#ef4444",
+          borderWidth: 3,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          pointBackgroundColor: "#ffffff",
+          pointBorderColor: "#ef4444",
+          pointBorderWidth: 3,
+          tension: 0.3
         },
         {
-          label: "Minimum Temperature (°C)",
-          data: minimumTemperatures
+          label: "Minimum Temperature",
+          data: minimumTemperatures,
+          borderColor: "#2563eb",
+          backgroundColor: "#2563eb",
+          borderWidth: 3,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          pointBackgroundColor: "#ffffff",
+          pointBorderColor: "#2563eb",
+          pointBorderWidth: 3,
+          tension: 0.3
         }
       ]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            padding: 20
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return `${context.dataset.label}: ${context.parsed.y}°C`;
+            }
+          }
+        }
+      },
       scales: {
+        x: {
+          grid: {
+            display: false
+          }
+        },
         y: {
+          title: {
+            display: true,
+            text: "Temperature (°C)"
+          },
           beginAtZero: false
         }
       }
