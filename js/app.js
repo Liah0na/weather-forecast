@@ -18,7 +18,8 @@ const showWeather = (locationData, weatherData) => {
   const temperature = weatherData.current.temperature_2m;
   const humidity = weatherData.current.relative_humidity_2m;
   const forecastData = prepareForecastData(weatherData.daily);
-  const forecastCards = createForecastCards(forecastData);
+  const processedForecast = processForecastDays(forecastData);
+  const dailyWeatherDetails = createDailyWeatherDetails(processedForecast);
   const forecastSummary = createForecastSummary(forecastData);
 
   weatherDisplay.innerHTML = `
@@ -40,12 +41,7 @@ const showWeather = (locationData, weatherData) => {
         <canvas id="temperature-chart"></canvas>
       </div>
     </section>
-    <section class="forecast">
-      <h2>Forecast</h2>
-      <div class="forecast-grid">
-        ${forecastCards.join("")}
-      </div>
-    </section>
+    ${dailyWeatherDetails}
   `;
   createTemperatureChart(forecastData);
 }
@@ -218,19 +214,47 @@ const formatForecastDate = (dateString) => {
   }).format(date);
 }
 
-const createForecastCards = (forecastData) => {
-  return forecastData.map(day => {
-    const weatherInfo = getWeatherInfo(day.weatherCode);
-    const formattedDate = formatForecastDate(day.date);
+const prepareForecastData = (dailyData) => {
+  return dailyData.time.map((date, index) => {
+    return {
+      date: date,
+      maxTemperature: dailyData.temperature_2m_max[index],
+      minTemperature: dailyData.temperature_2m_min[index],
+      weatherCode: dailyData.weather_code[index]
+    };
+  });
+}
 
+const processForecastDays = (forecastData, index = 0, result = []) => {
+  if (index >= forecastData.length) {
+    return result;
+  }
+
+  const currentDay = forecastData[index];
+
+  result.push({
+    date: formatForecastDate(currentDay.date),
+    weather: getWeatherInfo(currentDay.weatherCode),
+    maxTemperature: currentDay.maxTemperature,
+    minTemperature: currentDay.minTemperature
+  });
+
+  return processForecastDays(
+    forecastData,
+    index + 1,
+    result
+  );
+}
+
+const createDailyWeatherDetails = (processedForecast) => {
+
+  const details = processedForecast.map(day => {
     return `
-      <article class="forecast-card">
-        <h3>${formattedDate}</h3>
-        <div class="weather-icon">
-          ${weatherInfo.icon}
-        </div>
-        <p class="forecast-description">
-          ${weatherInfo.description}
+      <article class="daily-detail">
+        <h3>${day.date}</h3>
+        <p>
+          ${day.weather.icon}
+          ${day.weather.description}
         </p>
         <p>
           High: ${day.maxTemperature}°C
@@ -241,17 +265,15 @@ const createForecastCards = (forecastData) => {
       </article>
     `;
   });
-}
 
-const prepareForecastData = (dailyData) => {
-  return dailyData.time.map((date, index) => {
-    return {
-      date: date,
-      maxTemperature: dailyData.temperature_2m_max[index],
-      minTemperature: dailyData.temperature_2m_min[index],
-      weatherCode: dailyData.weather_code[index]
-    };
-  });
+  return `
+    <section class="daily-details">
+      <h2>Daily Weather Details</h2>
+      <div class="daily-details-grid">
+        ${details.join("")}
+      </div>
+    </section>
+  `;
 }
 
 const getWarmDays = (forecastData) => {
